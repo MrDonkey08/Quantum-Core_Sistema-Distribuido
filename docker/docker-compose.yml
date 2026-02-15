@@ -1,0 +1,30 @@
+
+services:
+  worker1:
+    build:
+      context: ../rust
+      dockerfile: ../docker/Dockerfile
+    container_name: worker1
+    restart: unless-stopped
+
+  worker2:
+    build:
+      context: ../rust
+      dockerfile: ../docker/Dockerfile
+    container_name: worker2
+    restart: unless-stopped
+
+  worker3:
+    build:
+      context: ../rust
+      dockerfile: ../docker/Dockerfile
+    container_name: worker3
+    restart: unless-stopped
+
+  worker4:
+    build:
+      context: ../rust
+      dockerfile: ../docker/Dockerfile
+    container_name: worker4
+    restart: unless-stopped
+
