@@ -1,3 +1,11 @@
+---
+name: User Story
+about: This template is for creating user stories
+title: ""
+labels: ""
+assignees: ""
+---
+
 ## Rol de Usuario y Objetivo
 
 **Como** [rol] \
