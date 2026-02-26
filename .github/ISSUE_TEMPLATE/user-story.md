@@ -1,33 +1,24 @@
----
-name: User Story
-about: This template is for creating user stories
-title: ""
-labels: ""
-assignees: ""
----
+## Rol de Usuario y Objetivo
 
-## User Role & Goal
+**Como** [rol] \
+ **Necesito** [una acción o funcionalidad] \
+ **Para** [una razón o beneficio]
 
-**As a** [role] \
- **I need** [an action or feature] \
- **So that** [a reason or benefit]
+## Detalles y Suposiciones
 
-## Details and Assumptions
+- [Documenta lo que sabes]
 
-- [Document what you know]
-
-## Acceptance Criteria (Gherkin)
+## Criterios de Aceptación (Gherkin)
 
 ```gherkin
-Scenario: [Brief description of the scenario]
-  Given [some context]
-  When [certain action or event occurs]
-  Then [expected outcome]
-  And [more context, events or outcomes] (Optional)
-
-Scenario [Edge case] (Optional)
-  Given [some context]
-  When [certain action or event occurs]
-  Then [expected outcome]
-  And [more context, events or outcomes] (Optional)
+Scenario: [Breve descripción del escenario]
+  Given [algún contexto]
+  When [cierta acción o evento ocurre]
+  Then [resultado esperado]
+  And [más contexto, eventos o resultados] (Opcional)
+Scenario [Caso borde] (Opcional)
+  Given [algún contexto]
+  When [cierta acción o evento ocurre]
+  Then [resultado esperado]
+  And [más contexto, eventos o resultados] (Opcional)
 ```
