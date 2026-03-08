@@ -92,4 +92,11 @@ ping 10.0.0.2
 ## 6.Contenerización con Docker
 El programa en Rust se empaqueta dentro de un contenedor.  
 
-Ejemplo de Dockerfile:  
+Dockerfile:  
+para la configuracion del vaya al archivo readme agregado en la carpeta docker que se encuentra en este mismo repositorio.  
+https://github.com/MrDonkey08/Quantum-Core_Sistema-Distribuido/blob/main/docker/README.md  
+
+## Despliegue con Kubernetes
+
+Se utiliza Kubernetes para ejecutar múltiples instancias del programa.  
+Ejemplo de job distribuido:  
