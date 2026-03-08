@@ -40,33 +40,54 @@ Componentes principales:
   - Cada nodo calcula parte de la imagen
   - Los resultados se combinan
 
-## 3.Topologia WireGuard
-Se utilizó una topología estrella con WireGuard.
-| Nodo | Dirección VPN | Rol    |
-| ---- | ------------- | ------ |
-| PC1  | 10.0.0.2      | Worker |
-| PC2  | 10.0.0.3      | Worker |
-| PC3  | 10.0.0.4      | Worker |
-| PC4  | 10.0.0.5      | Worker |
-| PC5  | 10.0.0.6      | Master |
+## 3.Topología WireGuard
 
+Se utilizó una **topología estrella (Hub-and-Spoke)** con WireGuard.
+
+Todas las computadoras se conectan al nodo maestro, el cual funciona como servidor VPN y punto central de comunicación.
+
+Una vez conectados a la VPN, se crea un **cluster de Kubernetes** que permite ejecutar tareas distribuidas entre los nodos.
+
+Para el cálculo del conjunto de Mandelbrot se ejecutarán **20 contenedores (pods)** en Kubernetes.
+
+El **orquestador de Kubernetes** se encargará de distribuir automáticamente estos contenedores entre las diferentes máquinas del cluster dependiendo de los recursos disponibles.
+
+| Nodo | Dirección VPN | Rol |
+|-----|---------------|------|
+| PC1 | 10.0.0.2 | Worker |
+| PC2 | 10.0.0.3 | Worker |
+| PC3 | 10.0.0.4 | Worker |
+| PC4 | 10.0.0.5 | Worker |
+| PC5 | 10.0.0.6 | Master |
 ## 4.Requisitos
+
+Para ejecutar el sistema distribuido se requiere contar con una distribución de Linux ejecutándose en una máquina virtual.
+
+Dependiendo del sistema operativo se utilizaron las siguientes tecnologías:
+
+- **Windows 10 / Windows 11**
+  - WSL2 (Windows Subsystem for Linux)
+
+- **Linux**
+  - QEMU para virtualización
 
 Software necesario:
 
-- Windows 10/11, Linux
-- WSL2
-- Ubuntu
+- Ubuntu 22.04 o superior
 - WireGuard
 - Docker
 - Kubernetes (k3s o kubeadm)
 - Rust
+- Git
 
-Instalación básica:
-- sudo apt update
-- sudo apt install docker.io
-- sudo apt install wireguard
-- curl https://sh.rustup.rs -sSf | sh
+Instalación básica en Ubuntu:
+
+```bash
+sudo apt update
+sudo apt install docker.io
+sudo apt install wireguard
+curl https://sh.rustup.rs -sSf | sh
+```
 
 ## 5.Configuración de la VPN  
 Para que todos los nodos puedan conectarse al Servidor VPN en Wireguard se realizó la instalación de Wireguard en cada máquina virtual de los distintos nodos. Utilizando el comando sudo apt install wireguard para realizar la instalación.​​
@@ -97,9 +118,10 @@ El programa en Rust se empaqueta dentro de un contenedor.
 
 Dockerfile y Docker compose:  
 para la configuracion del vaya al archivo readme agregado en la carpeta docker que se encuentra en este mismo repositorio.  
+[Docker README](docker/README.md)
 https://github.com/MrDonkey08/Quantum-Core_Sistema-Distribuido/blob/main/docker/README.md  
 ejemplo de ejecucuion:  
-
+```bash
 FROM rust:1.93-trixie  
 
 WORKDIR /app  
@@ -120,7 +142,7 @@ RUN cargo build -- release
 
 # Executes the pre-compiled rust release binary, just like "cargo run -- release"  
 CMD ["./target/release/mandelbrot"]  
-
+``` 
 Dentro de un Sistema Distribuido es necesario la implementación de contenedores. Se establece un Dockerfile base para la creación de los contenedores. El Dockerfile utiliza la imagen oficial de Rust versión 1.93 y está basado en Linux Debian.​
 Para gestionar los contenedores se utilizó el siguiente archivo de configuración docker-compose.yml  
 ​
@@ -128,6 +150,8 @@ Para gestionar los contenedores se utilizó el siguiente archivo de configuraci�
 
 Se utiliza Kubernetes para ejecutar múltiples instancias del programa.  
 Ejemplo de job distribuido:  
+
+```yaml
   apiVersion: batch/v1  
   kind: Job  
   metadata:  
@@ -140,7 +164,7 @@ Ejemplo de job distribuido:
         - name: mandelbrot  
           image: mandelbrot:latest  
         restartPolicy: Never  
-
+```
 Ejecutar: kubectl apply -f mandelbrot-job.yaml  
 
 Ver pods: kubectl get pods  
