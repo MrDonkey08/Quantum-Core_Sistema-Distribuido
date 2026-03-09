@@ -2,7 +2,7 @@ FROM rust:1.93-trixie
 
 WORKDIR /app
 
-COPY Cargo.lock ./
+# COPY Cargo.lock ./
 COPY Cargo.toml ./
 
 # PERFORMANCE: increase the rebuild speed because it loads all rust dependencies
