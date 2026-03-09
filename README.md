@@ -1,6 +1,6 @@
 # Quantum Core - Sistema Distribuido
 
-## 1.Acerca
+# 1.Acerca
 
 Este proyecto consiste en el desarrollo de un **sistema distribuido** haciendo
 uso de tecnologías tales como **Docker**, **Rust**, **Kubernetes**,
@@ -16,7 +16,7 @@ uso de tecnologías tales como **Docker**, **Rust**, **Kubernetes**,
 - Rust para ejecutar el algoritmo de Mandelbrot de forma eficiente
 - El objetivo es distribuir el cálculo de la imagen entre varias máquinas, reduciendo el tiempo de procesamiento.
 
-## 2.Arquitectura del Sistema.
+# 2.Arquitectura del Sistema.
 
 El sistema sigue una arquitectura Master–Worker.
 
@@ -40,7 +40,7 @@ Componentes principales:
   - Cada nodo calcula parte de la imagen
   - Los resultados se combinan
 
-## 3.Topología WireGuard
+# 3.Topología WireGuard
 
 Se utilizó una **topología estrella (Hub-and-Spoke)** con WireGuard.
 
@@ -89,7 +89,7 @@ sudo apt install wireguard
 curl https://sh.rustup.rs -sSf | sh
 ```
 
-## 5.Configuración de la VPN  
+# 5.Configuración de la VPN  
 Para que todos los nodos puedan conectarse al Servidor VPN en Wireguard se realizó la instalación de Wireguard en cada máquina virtual de los distintos nodos. Utilizando el comando sudo apt install wireguard para realizar la instalación.​​
 Se debe crear una carpeta para Wireguard con el comando sudo mkdir -p /etc/wireguard y crear el archivo de configuración con el comando sudo nano /etc/wireguard/wg0.conf, después se debe ajustar los permisos con sudo chmod 600 /etc/wireguard/wg0.conf. Para levantar la VPN se utiliza la instrucción sudo wg-quick up wg0 y verificar la conexión con wg-show.  
 
@@ -113,7 +113,7 @@ sudo wg-quick up wg0
 Verificar conexión:  
 ping 10.0.0.2  
 
-## 6.Contenerización con Docker
+# 6.Contenerización con Docker
 El programa en Rust se empaqueta dentro de un contenedor.  
 
 Dockerfile y Docker compose:  
@@ -146,7 +146,7 @@ CMD ["./target/release/mandelbrot"]
 Dentro de un Sistema Distribuido es necesario la implementación de contenedores. Se establece un Dockerfile base para la creación de los contenedores. El Dockerfile utiliza la imagen oficial de Rust versión 1.93 y está basado en Linux Debian.​
 Para gestionar los contenedores se utilizó el siguiente archivo de configuración docker-compose.yml  
 ​
-## 7.Despliegue con Kubernetes  
+# 7.Despliegue con Kubernetes  
 
 Se utiliza Kubernetes para ejecutar múltiples instancias del programa.  
 Ejemplo de job distribuido:  
@@ -169,9 +169,127 @@ Ejecutar: kubectl apply -f mandelbrot-job.yaml
 
 Ver pods: kubectl get pods  
 
-## 8. Algoritmo de Mandelbrot en Rust  
+# 8. Algoritmo de Mandelbrot en Rust 
+Instalación de Rust  
 
-## 9. Ejecución del Sistema  
+Instalar Rust utilizando rustup:
+
+```bash
+curl https://sh.rustup.rs -sSf | sh
+```
+
+Crear un proyecto:  
+
+```bash
+cargo new mandelbrot_worker
+cd mandelbrot_worker
+```
+
+---
+
+## Ejemplo de Código del Worker en Rust  
+
+Archivo:  
+
+`src/main.rs`
+
+```rust
+use std::env;
+
+fn mandelbrot(x: f64, y: f64, max_iter: u32) -> u32 {
+    let mut zx = 0.0;
+    let mut zy = 0.0;
+    let mut iter = 0;
+
+    while zx*zx + zy*zy <= 4.0 && iter < max_iter {
+        let temp = zx*zx - zy*zy + x;
+        zy = 2.0*zx*zy + y;
+        zx = temp;
+        iter += 1;
+    }
+
+    iter
+}
+
+fn main() {
+
+    let args: Vec<String> = env::args().collect();
+
+    let start: f64 = args[1].parse().unwrap();
+    let end: f64 = args[2].parse().unwrap();
+
+    let mut total = 0;
+
+    for i in 0..1000 {
+
+        let x = start + (end-start)*(i as f64)/1000.0;
+
+        for j in 0..1000 {
+
+            let y = -1.0 + 2.0*(j as f64)/1000.0;
+
+            total += mandelbrot(x,y,1000);
+
+        }
+    }
+
+    println!("Resultado parcial: {}", total);
+}
+```
+
+## Crear imagen Docker
+
+Archivo `Dockerfile`:
+
+```dockerfile
+FROM rust:1.75
+
+WORKDIR /app
+
+COPY . .
+
+RUN cargo build --release
+
+CMD ["./target/release/mandelbrot_worker","-2.0","1.0"]
+```
+
+## Construir imagen:
+
+```bash
+docker build -t mandelbrot-worker .
+```
+
+Subir imagen a DockerHub:
+
+```bash
+docker tag mandelbrot-worker usuario/mandelbrot-worker
+docker push usuario/mandelbrot-worker
+```
+
+---
+
+## Ejecución distribuida con Kubernetes
+
+Archivo `mandelbrot-job.yaml`
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mandelbrot-job
+spec:
+  completions: 20
+  parallelism: 5
+  template:
+    spec:
+      containers:
+      - name: mandelbrot
+        image: usuario/mandelbrot-worker
+      restartPolicy: Never
+```
+
+
+# 9. Ejecución del Sistema  
 Pasos:  
 - Iniciar la VPN: sudo wg-quick up wg0  
 - Verificar nodos del cluster: kubectl get nodes
