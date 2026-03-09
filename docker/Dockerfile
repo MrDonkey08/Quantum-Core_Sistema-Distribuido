@@ -1,8 +1,8 @@
-FROM rust:1.93-trixie
+FROM rust:1.93-slim-trixie AS builder
 
 WORKDIR /app
 
-# COPY Cargo.lock ./
+COPY Cargo.lock ./
 COPY Cargo.toml ./
 
 # PERFORMANCE: increase the rebuild speed because it loads all rust dependencies
@@ -10,11 +10,13 @@ COPY Cargo.toml ./
 RUN mkdir -p src \
 	&& echo 'fn main() {}' > src/main.rs \
 	&& cargo build --release \
-	# Remove dummy artifacts
 	&& rm -rf src target/release/deps/mandelbrot*
 
 COPY ./src/ ./src/
 RUN cargo build --release
 
-# Executes the pre-compiled rust release binary, just like `cargo run --release`
-CMD ["./target/release/mandelbrot"]
+# Final image — no Rust toolchain, no build artifacts, just the binary
+FROM debian:trixie-slim
+WORKDIR /app
+COPY --from=builder /app/target/release/mandelbrot .
+CMD ["./mandelbrot"]
