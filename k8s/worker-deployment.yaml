@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quantum-workers
+spec:
+  replicas: 15
+  selector:
+    matchLabels:
+      app: quantum-worker
+  template:
+    metadata:
+      labels:
+        app: quantum-worker
+    spec:
+      containers:
+      - name: quantum-worker
+        image: quantum-core:latest
+        imagePullPolicy: Never
+        command: ["/app/target/release/mandelbrot"]

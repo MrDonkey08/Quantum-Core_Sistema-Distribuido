@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quantum-coordinator
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: quantum-coordinator
+  template:
+    metadata:
+      labels:
+        app: quantum-coordinator
+    spec:
+      containers:
+      - name: quantum-coordinator
+        image: quantum-core:latest
+        imagePullPolicy: Never
+        command: ["/app/target/release/mandelbrot"]
