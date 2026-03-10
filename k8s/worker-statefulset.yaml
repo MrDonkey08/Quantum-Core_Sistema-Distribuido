@@ -3,7 +3,6 @@ kind: StatefulSet
 metadata:
   name: worker
 spec:
-  serviceName: worker-headless # must match the headless service name above
   replicas: 20
   selector:
     matchLabels:
@@ -22,3 +21,11 @@ spec:
               value: "worker"
             - name: LISTEN_ADDR
               value: "0.0.0.0:8080"
+            - name: COORDINATOR_ADDR
+              # hardcoded WireGuard IP of coordinator's host
+              value: "10.5.5.4:9000"
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  # Kubernetes Downward API — injects pod's own IP
+                  fieldPath: status.podIP
