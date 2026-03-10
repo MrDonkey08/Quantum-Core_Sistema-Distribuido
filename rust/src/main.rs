@@ -56,18 +56,26 @@ async fn run_coordinator() {
         registration_addr
     );
 
-    // Collect all worker registrations
-    while workers.lock().await.len() < WORKER_COUNT {
+    let mut registration_handles = Vec::new();
+
+    // Accept exactly WORKER_COUNT connections, no more
+    for _ in 0..WORKER_COUNT {
         match listener.accept().await {
             Ok((socket, addr)) => {
                 println!("[COORDINATOR] Registration connection from {}", addr);
                 let workers_clone = Arc::clone(&workers);
-                tokio::spawn(async move {
+                let handle = tokio::spawn(async move {
                     handle_registration(socket, workers_clone).await;
                 });
+                registration_handles.push(handle);
             }
             Err(e) => eprintln!("[COORDINATOR] Accept error: {}", e),
         }
+    }
+
+    // Wait for all registration handlers to finish writing to the list
+    for handle in registration_handles {
+        handle.await.unwrap();
     }
 
     let registered = workers.lock().await.clone();
@@ -77,14 +85,12 @@ async fn run_coordinator() {
     );
 
     // Divide rows evenly across workers
-    // e.g., 4000 rows / 20 workers = 200 rows each
     let rows_per_worker = IMG_SIDE / WORKER_COUNT as u32;
     let tasks: Vec<WorkerTask> = registered
         .iter()
         .enumerate()
         .map(|(i, addr)| {
             let start_row = i as u32 * rows_per_worker;
-            // Last worker takes any remainder rows
             let end_row = if i == WORKER_COUNT - 1 {
                 IMG_SIDE
             } else {
@@ -100,7 +106,6 @@ async fn run_coordinator() {
         .collect();
 
     // Dispatch all tasks concurrently and collect pixel rows
-    // Each entry: (start_row, raw_bytes)
     let results: Arc<Mutex<Vec<(u32, Vec<u8>)>>> =
         Arc::new(Mutex::new(Vec::new()));
     let mut handles = Vec::with_capacity(tasks.len());
