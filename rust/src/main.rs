@@ -257,8 +257,8 @@ async fn assemble_image(mut results: Vec<(u32, Vec<u8>)>) {
         }
     }
 
-    img.save("fractal.png").unwrap();
-    println!("[COORDINATOR] Image saved as fractal.png");
+    img.save("/app/output/fractal.png").unwrap();
+    println!("[COORDINATOR] Image saved as /app/output/fractal.png");
 }
 
 // --- WORKER ------------------------------------------------------------------
