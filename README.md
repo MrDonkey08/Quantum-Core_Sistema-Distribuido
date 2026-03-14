@@ -1,4 +1,4 @@
-# Quantum Core - Sistema Distribuido
+# Quantum Core: Sistema Distribuido para la Generación del Conjunto de Mandelbrot
 
 ## 1. Acerca
 
