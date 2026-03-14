@@ -1,67 +1,75 @@
 # Quantum Core - Sistema Distribuido
 
-# 1.Acerca
+## 1. Acerca
 
 Este proyecto consiste en el desarrollo de un **sistema distribuido** haciendo
 uso de tecnologías tales como **Docker**, **Rust**, **Kubernetes**,
-**Wireguard**, y **QEMU** o **WSL2**, implementando una topología
+**WireGuard**, y **QEMU** o **WSL2**, implementando una topología
 **hub-and-spoke** y desarrollando un algoritmo distribuido en Rust.
 
-## El sistema utiliza:
+### El Sistema Utiliza
 
 - WSL (Windows Subsystem for Linux) para ejecutar Linux en Windows
 - WireGuard para crear una red privada segura
-- Docker para contenerizar la aplicación
+- Docker para contenedorizar la aplicación
 - Kubernetes para distribuir las tareas entre nodos
 - Rust para ejecutar el algoritmo de Mandelbrot de forma eficiente
-- El objetivo es distribuir el cálculo de la imagen entre varias máquinas, reduciendo el tiempo de procesamiento.
+- El objetivo es distribuir el cálculo de la imagen entre varias máquinas,
+  reduciendo el tiempo de procesamiento.
 
-# 2.Arquitectura del Sistema.
+## 2. Arquitectura del Sistema
 
 El sistema sigue una arquitectura Master–Worker.
 
-Componentes principales:
+### Componentes principales
 
 - Nodo maestro
-  - coordina el cluster Kubernetes
-  - distribuye tareas
+  - Coordina el clúster Kubernetes
+  - Distribuye tareas
 
 - Nodos trabajadores
-  - ejecutan contenedores con el programa en Rust
-  - calculan una sección del Mandelbrot
+  - Ejecutan contenedores con el programa en Rust
+  - Calculan una sección del Mandelbrot
 
 - VPN WireGuard
-  - conecta todas las computadoras en una red privada
+  - Conecta todas las computadoras en una red privada
 
 - Flujo del sistema:
   - Las computadoras se conectan a la VPN
-  - Se crea el cluster Kubernetes
+  - Se crea el clúster Kubernetes
   - Se ejecuta un job distribuido
   - Cada nodo calcula parte de la imagen
   - Los resultados se combinan
 
-# 3.Topología WireGuard
+## 3. Topología WireGuard
 
 Se utilizó una **topología estrella (Hub-and-Spoke)** con WireGuard.
 
-Todas las computadoras se conectan al nodo maestro, el cual funciona como servidor VPN y punto central de comunicación.
+Todas las computadoras se conectan al nodo maestro, el cual funciona como
+servidor VPN y punto central de comunicación.
 
-Una vez conectados a la VPN, se crea un **cluster de Kubernetes** que permite ejecutar tareas distribuidas entre los nodos.
+Una vez conectados a la VPN, se crea un **clúster de Kubernetes** que permite
+ejecutar tareas distribuidas entre los nodos.
 
-Para el cálculo del conjunto de Mandelbrot se ejecutarán **20 contenedores (pods)** en Kubernetes.
+Para el cálculo del conjunto de Mandelbrot se ejecutarán **20 contenedores
+(pods)** en Kubernetes.
 
-El **orquestador de Kubernetes** se encargará de distribuir automáticamente estos contenedores entre las diferentes máquinas del cluster dependiendo de los recursos disponibles.
+El **orquestador de Kubernetes** se encargará de distribuir automáticamente
+estos contenedores entre las diferentes máquinas del clúster dependiendo de los
+recursos disponibles.
 
-| Nodo | Dirección VPN | Rol |
-|-----|---------------|------|
-| PC1 | 10.0.0.2 | Worker |
-| PC2 | 10.0.0.3 | Worker |
-| PC3 | 10.0.0.4 | Worker |
-| PC4 | 10.0.0.5 | Worker |
-| PC5 | 10.0.0.6 | Master |
-## 4.Requisitos
+| Nodo | Dirección VPN | Rol    |
+| ---- | ------------- | ------ |
+| PC1  | 10.0.0.2      | Worker |
+| PC2  | 10.0.0.3      | Worker |
+| PC3  | 10.0.0.4      | Worker |
+| PC4  | 10.0.0.5      | Worker |
+| PC5  | 10.0.0.6      | Master |
 
-Para ejecutar el sistema distribuido se requiere contar con una distribución de Linux ejecutándose en una máquina virtual.
+## 4. Requisitos
+
+Para ejecutar el sistema distribuido se requiere contar con una distribución de
+Linux ejecutándose en una máquina virtual.
 
 Dependiendo del sistema operativo se utilizaron las siguientes tecnologías:
 
@@ -89,88 +97,123 @@ sudo apt install wireguard
 curl https://sh.rustup.rs -sSf | sh
 ```
 
-# 5.Configuración de la VPN  
-Para que todos los nodos puedan conectarse al Servidor VPN en Wireguard se realizó la instalación de Wireguard en cada máquina virtual de los distintos nodos. Utilizando el comando sudo apt install wireguard para realizar la instalación.​​
-Se debe crear una carpeta para Wireguard con el comando sudo mkdir -p /etc/wireguard y crear el archivo de configuración con el comando sudo nano /etc/wireguard/wg0.conf, después se debe ajustar los permisos con sudo chmod 600 /etc/wireguard/wg0.conf. Para levantar la VPN se utiliza la instrucción sudo wg-quick up wg0 y verificar la conexión con wg-show.  
+## 5. Configuración de la VPN
 
-Generar claves:  
-wg genkey | tee privatekey | wg pubkey > publickey  
-con esa configuracion creara una clave publica y privada y con esas mismas se creara las claves publicas de los clientes
+Para que todos los nodos puedan conectarse al servidor VPN en WireGuard se
+realizó la instalación de WireGuard en cada máquina virtual de los distintos
+nodos, utilizando el comando `sudo apt install wireguard`.
 
-Ejemplo de configuración del servidor:  
-[Interface]  
-Address = 10.0.0.1/24  
-PrivateKey = SERVER_PRIVATE_KEY  
-ListenPort = 51820  
+Se debe crear una carpeta para WireGuard con el comando
+`sudo mkdir -p /etc/wireguard` y crear el archivo de configuración con el
+comando `sudo nano /etc/wireguard/wg0.conf`. Después se deben ajustar los
+permisos con `sudo chmod 600 /etc/wireguard/wg0.conf`. Para levantar la VPN se
+utiliza `sudo wg-quick up wg0` y para verificar la conexión, `wg show`.
 
-[Peer]  
-PublicKey = CLIENT_PUBLIC_KEY  
-AllowedIPs = 10.0.0.2/32  
+### Generación de Llaves
 
-Iniciar WireGuard:  
-sudo wg-quick up wg0  
-
-Verificar conexión:  
-ping 10.0.0.2  
-
-# 6.Contenerización con Docker
-El programa en Rust se empaqueta dentro de un contenedor.  
-
-Dockerfile y Docker compose:  
-para la configuracion del vaya al archivo readme agregado en la carpeta docker que se encuentra en este mismo repositorio.  
-[Docker README](docker/README.md)
-https://github.com/MrDonkey08/Quantum-Core_Sistema-Distribuido/blob/main/docker/README.md  
-ejemplo de ejecucuion:  
 ```bash
-FROM rust:1.93-trixie  
+wg genkey | tee privatekey | wg pubkey > publickey
+```
 
-WORKDIR /app  
+Con esa configuración se crearán una clave pública y privada, y con esas mismas
+se crearán las claves públicas de los clientes.
 
-COPY Cargo.lock ./  
-COPY Cargo.toml ./  
+#### Ejemplo de Configuración del Servidor
 
-# PERFORMANCE: increase the rebuild speed because it loads all rust dependencies  
-# See: https://www.youtube.com/watch?v=5Wfpzfniu4I  
-RUN mkdir -p src \  
-&& echo 'fn main() (}' > src/main.rs \  
-&& cargo build -- release \  
-# Remove dummy artifacts  
-&& rm -rf src target/release/deps/mandelbrot*  
+Archivo `/etc/wireguard/wg0.conf` del servidor:
 
-COPY ./src/ ./src/  
-RUN cargo build -- release  
+```text
+[Interface]
+Address = 10.0.0.1/24
+PrivateKey = SERVER_PRIVATE_KEY
+ListenPort = 51820
 
-# Executes the pre-compiled rust release binary, just like "cargo run -- release"  
-CMD ["./target/release/mandelbrot"]  
-``` 
-Dentro de un Sistema Distribuido es necesario la implementación de contenedores. Se establece un Dockerfile base para la creación de los contenedores. El Dockerfile utiliza la imagen oficial de Rust versión 1.93 y está basado en Linux Debian.​
-Para gestionar los contenedores se utilizó el siguiente archivo de configuración docker-compose.yml  
-​
-# 7.Despliegue con Kubernetes  
+[Peer]
+PublicKey = CLIENT_PUBLIC_KEY
+AllowedIPs = 10.0.0.2/32
+```
 
-Se utiliza Kubernetes para ejecutar múltiples instancias del programa.  
-Ejemplo de job distribuido:  
+Iniciar WireGuard:
+
+```bash
+sudo wg-quick up wg0
+```
+
+Verificar conexión:
+
+```bash
+ping 10.0.0.1
+```
+
+## 6. Contenedorización con Docker
+
+El programa en Rust se empaqueta dentro de un contenedor.
+
+### Dockerfile
+
+```dockerfile
+FROM rust:1.93-trixie
+
+WORKDIR /app
+
+COPY Cargo.lock ./
+COPY Cargo.toml ./
+
+# PERFORMANCE: increase the rebuild speed because it loads all rust dependencies
+# See: https://www.youtube.com/watch?v=5Wfpzfniu4I
+RUN mkdir -p src \
+&& echo 'fn main() {}' > src/main.rs \
+&& cargo build --release \
+# Remove dummy artifacts
+&& rm -rf src target/release/deps/mandelbrot*
+
+COPY ./src/ ./src/
+RUN cargo build --release
+
+# Executes the pre-compiled rust release binary, just like "cargo run --release"
+CMD ["./target/release/mandelbrot"]
+```
+
+Dentro de un sistema distribuido es necesaria la implementación de contenedores.
+Se establece un Dockerfile base para la creación de los contenedores. El
+Dockerfile utiliza la imagen oficial de Rust versión 1.93 y está basado en
+Debian Linux.
+
+## 7. Despliegue con Kubernetes
+
+Se utiliza Kubernetes para ejecutar múltiples instancias del programa. Ejemplo
+de job distribuido:
 
 ```yaml
-  apiVersion: batch/v1  
-  kind: Job  
-  metadata:  
-    name: mandelbrot-job  
-  spec:  
-    parallelism: 5  
-    template:  
-      spec:  
-        containers:  
-        - name: mandelbrot  
-          image: mandelbrot:latest  
-        restartPolicy: Never  
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mandelbrot-job
+spec:
+  parallelism: 5
+  template:
+    spec:
+      containers:
+        - name: mandelbrot
+          image: mandelbrot:latest
+      restartPolicy: Never
 ```
-Ejecutar: kubectl apply -f mandelbrot-job.yaml  
 
-Ver pods: kubectl get pods  
+Ejecutar:
 
-# 8. Algoritmo de Mandelbrot en Rust 
-Instalación de Rust  
+```bash
+kubectl apply -f mandelbrot-job.yaml
+```
+
+Ver pods:
+
+```bash
+kubectl get pods
+```
+
+## 8. Algoritmo de Mandelbrot en Rust
+
+Instalación de Rust
 
 Instalar Rust utilizando rustup:
 
@@ -178,20 +221,16 @@ Instalar Rust utilizando rustup:
 curl https://sh.rustup.rs -sSf | sh
 ```
 
-Crear un proyecto:  
+Crear un proyecto:
 
 ```bash
 cargo new mandelbrot_worker
 cd mandelbrot_worker
 ```
 
----
+### Ejemplo de Código del Worker en Rust
 
-## Ejemplo de Código del Worker en Rust  
-
-Archivo:  
-
-`src/main.rs`
+Archivo `src/main.rs`:
 
 ```rust
 use std::env;
@@ -237,7 +276,7 @@ fn main() {
 }
 ```
 
-## Crear imagen Docker
+### Crear Imagen Docker
 
 Archivo `Dockerfile`:
 
@@ -253,7 +292,7 @@ RUN cargo build --release
 CMD ["./target/release/mandelbrot_worker","-2.0","1.0"]
 ```
 
-## Construir imagen:
+Construir imagen:
 
 ```bash
 docker build -t mandelbrot-worker .
@@ -266,11 +305,9 @@ docker tag mandelbrot-worker usuario/mandelbrot-worker
 docker push usuario/mandelbrot-worker
 ```
 
----
+### Ejecución Distribuida con Kubernetes
 
-## Ejecución distribuida con Kubernetes
-
-Archivo `mandelbrot-job.yaml`
+Archivo `mandelbrot-job.yaml`:
 
 ```yaml
 apiVersion: batch/v1
@@ -283,18 +320,20 @@ spec:
   template:
     spec:
       containers:
-      - name: mandelbrot
-        image: usuario/mandelbrot-worker
+        - name: mandelbrot
+          image: usuario/mandelbrot-worker
       restartPolicy: Never
 ```
 
+## 9. Ejecución del Sistema
 
-# 9. Ejecución del Sistema  
-Pasos:  
-- Iniciar la VPN: sudo wg-quick up wg0  
-- Verificar nodos del cluster: kubectl get nodes
-- Ejecutar el cálculo distribuido: kubectl apply -f mandelbrot-job.yaml
-- Ver estado de pods: kubectl get pods    
-
-
-
+```bash
+# 1. Iniciar la VPN
+sudo wg-quick up wg0
+# 2. Verificar nodos del clúster
+kubectl get nodes
+# 3. Ejecutar el cálculo distribuido
+kubectl apply -f mandelbrot-job.yaml
+# 4. Ver estado de pods
+kubectl get pods
+```
