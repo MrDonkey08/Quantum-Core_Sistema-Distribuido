@@ -37,54 +37,39 @@ A continuación se muestra el software requerido por cada uno de los nodos
 > Para más información del entorno de los nodos (hosts) véase
 > [Issue 2](https://github.com/MrDonkey08/Quantum-Core_Sistema-Distribuido/issues/2)
 
-## 2. Arquitectura del Sistema
+## 3. Arquitectura del Sistema Distribuido (VPN + K3s)
 
-El sistema sigue una arquitectura Master–Worker.
+Como arquitectura del sistema distribuido utilizamos una topología
+**hub-and-spoke**, dónde el **hub es el servidor VPN** y los **hubs** son los
+clientes VPN.
 
-### Componentes principales
+Para nuestra arquitectura, utilizamos una configuración que permitiese a
+cualquier nodo ser el **servidor K3s**, ofreciéndonos flexibilidad al momento de
+trabajar con K3s.
 
-- Nodo maestro
-  - Coordina el clúster Kubernetes
-  - Distribuye tareas
+### Roles de los Nodos
 
-- Nodos trabajadores
-  - Ejecutan contenedores con el programa en Rust
-  - Calculan una sección del Mandelbrot
+Los roles que establecimos para los nodos son:
 
-- VPN WireGuard
-  - Conecta todas las computadoras en una red privada
+| Nodo | Rol VPN  | IP VPN | Rol K3s       |
+| ---- | -------- | ------ | ------------- |
+| 1    | Servidor | .1     | N/A           |
+| 2    | Cliente  | .2     | \<none\>      |
+| 3    | Cliente  | .4     | control-plane |
+| 4    | Cliente  | .5     | \<none\>      |
+| 5    | Cliente  | .6     | \<none\>      |
+| 6    | Cliente  | .8     | \<none\>      |
 
-- Flujo del sistema:
-  - Las computadoras se conectan a la VPN
-  - Se crea el clúster Kubernetes
-  - Se ejecuta un job distribuido
-  - Cada nodo calcula parte de la imagen
-  - Los resultados se combinan
+Dónde:
 
-## 3. Topología WireGuard
+- La red de la VPN es la `10.5.5.0/24`
 
-Se utilizó una **topología estrella (Hub-and-Spoke)** con WireGuard.
+- El **control-plane** es el **servidor K3s**, el cuál se encarga de coordinar
+  el clúster, distribuyendo los 21 pods (1 _coordinators_ y 20 _workers_) nodos
+  a sí mismo y al resto de los nodos.
 
-Todas las computadoras se conectan al nodo maestro, el cual funciona como
-servidor VPN y punto central de comunicación.
-
-Una vez conectados a la VPN, se crea un **clúster de Kubernetes** que permite
-ejecutar tareas distribuidas entre los nodos.
-
-Para el cálculo del conjunto de Mandelbrot se ejecutarán **20 contenedores
-(pods)** en Kubernetes.
-
-El **orquestador de Kubernetes** se encargará de distribuir automáticamente
-estos contenedores entre las diferentes máquinas del clúster dependiendo de los
-recursos disponibles.
-
-| Nodo | Dirección VPN | Rol    |
-| ---- | ------------- | ------ |
-| PC1  | 10.0.0.2      | Worker |
-| PC2  | 10.0.0.3      | Worker |
-| PC3  | 10.0.0.4      | Worker |
-| PC4  | 10.0.0.5      | Worker |
-| PC5  | 10.0.0.6      | Master |
+- Los nodos **\<none\>** son los **agentes (agents) K3S**, los cuáles se
+  conectarán al _control-plane_ y recibirán los nodos.
 
 ## 4. Requisitos
 
