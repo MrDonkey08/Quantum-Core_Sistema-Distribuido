@@ -7,15 +7,35 @@ uso de tecnologías tales como **Docker**, **Rust**, **Kubernetes**,
 **WireGuard**, y **QEMU** o **WSL2**, implementando una topología
 **hub-and-spoke** y desarrollando un algoritmo distribuido en Rust.
 
-### El Sistema Utiliza
+## 2. Requisitos de Software
 
-- WSL (Windows Subsystem for Linux) para ejecutar Linux en Windows
-- WireGuard para crear una red privada segura
-- Docker para contenedorizar la aplicación
-- Kubernetes para distribuir las tareas entre nodos
-- Rust para ejecutar el algoritmo de Mandelbrot de forma eficiente
-- El objetivo es distribuir el cálculo de la imagen entre varias máquinas,
-  reduciendo el tiempo de procesamiento.
+A continuación se muestra el software requerido por cada uno de los nodos
+(hosts) del sistema distribuido:
+
+> [!TIP]
+>
+> Puede que versiones anteriores del software funcionen. Las versiones
+> especificadas son aquellas que fueron probadas.
+
+| Software              | Propósito                                                                      |             Versión | Forzozamente requerido |
+| --------------------- | ------------------------------------------------------------------------------ | ------------------: | ---------------------- |
+| **WireGuard**         | Para establecer una conexión segura entre los nodos a través de Internet       |      1.0.20210914 + | Sí                     |
+| **Docker**            | Para la creación de los contenedores que ejecutará cada host                   |            29.3.0 + | Sí                     |
+| **K3s**               | Para la orquestación de los pods (contenedores)                                |       1.34.5+k3s1 + | Sí                     |
+| **iptables**          | Para el filtrado de paquetes IPv4/IPv6                                         |            1.8.11 + | No                     |
+| **iperf3**            | Para pruebas de rendimiento de throughput entre el servidor y los clientes VPN | 3.18 (cJSON 1.7.15) | No                     |
+| **ip** o **ifconfig** | Para visualizar las interfaces de red                                          |                 N/A | No                     |
+| **ping**              | Para probar la conectividad entre los nodos                                    |                 N/A | No                     |
+
+> [!NOTE]
+>
+> Cabe destacar que, como entorno de prueba, usamos como nodos máquinas
+> virtuales, específicamente _**WSL2 con Ubuntu** para los usuarios de **Windows
+> 10/11**_ y _**QEMU con Debian** para los usuarios de **Linux**_ (en nuestro
+> caso Arch Linux).
+>
+> Para más información del entorno de los nodos (hosts) véase
+> [Issue 2](https://github.com/MrDonkey08/Quantum-Core_Sistema-Distribuido/issues/2)
 
 ## 2. Arquitectura del Sistema
 
