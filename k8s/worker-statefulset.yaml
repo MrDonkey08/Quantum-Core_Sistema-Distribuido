@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: worker
+spec:
+  serviceName: worker-headless
+  replicas: 20
+  selector:
+    matchLabels:
+      app: mandelbrot-worker
+  template:
+    metadata:
+      labels:
+        app: mandelbrot-worker
+    spec:
+      containers:
+        - name: mandelbrot-worker
+          image: quantum-core:latest
+          imagePullPolicy: Never
+          env:
+            - name: ROLE
+              value: "worker"
+            - name: LISTEN_ADDR
+              value: "0.0.0.0:8080"
+            - name: COORDINATOR_ADDR
+              value: "coordinator-service:9000"
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP

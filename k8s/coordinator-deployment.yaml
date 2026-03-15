@@ -1,19 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: quantum-coordinator
+  name: coordinator
 spec:
-  replicas: 5
+  replicas: 1
   selector:
     matchLabels:
-      app: quantum-coordinator
+      app: mandelbrot-coordinator
   template:
     metadata:
       labels:
-        app: quantum-coordinator
+        app: mandelbrot-coordinator
     spec:
       containers:
-      - name: quantum-coordinator
-        image: quantum-core:latest
-        imagePullPolicy: Never
-        command: ["/app/target/release/mandelbrot"]
+        - name: mandelbrot-coordinator
+          image: quantum-core:latest
+          imagePullPolicy: Never
+          env:
+            - name: ROLE
+              value: "coordinator"
+            - name: REGISTRATION_ADDR
+              value: "0.0.0.0:9000"
+          volumeMounts:
+            - name: output
+              mountPath: /app/output
+      volumes:
+        - name: output
+          hostPath:
+            path: /tmp/mandelbrot-output
+            type: DirectoryOrCreate
