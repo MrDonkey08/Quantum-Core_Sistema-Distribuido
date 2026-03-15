@@ -119,3 +119,45 @@ sudo apt install wireguard
    ```bash
    ping 10.0.0.1
    ```
+
+## Instalación de Docker
+
+```bash
+sudo apt install docker
+```
+
+## Instalación de K3s
+
+### Instalación del Servidor K3s
+
+Para instalar k3s como servidor, ejecutamos el siguiente comando:
+
+```bash
+curl -sfL https://get.k3s.io | \
+  sh \
+    -s - server \
+      --bind-address=<ip-del-nodo> \
+      --advertise-address=<ip-del-nodo> \
+      --node-ip=<ip-del-nodo>
+```
+
+### Instalación de un Agent K3s
+
+Para instalar k3s como _agent (agente)_, ejecutamos el siguiente comando:
+
+```bash
+curl -sfL https://get.k3s.io | \
+  sh \
+    -s - agent \
+      --server=https://<ip-del-servidor>:6443 \
+      --token=<token-del-servidor> \
+      --node-ip=<ip-del-agente>
+```
+
+Donde el `token-del-servidor` se encuentra en el archivo
+`/var/lib/rancher/k3s/server/node-token` en el nodo servidor. Para visualizarla
+podemos ejecutar en el nodo servidor el siguiente comando:
+
+```bash
+sudo cat /var/lib/rancher/k3s/server/node-token
+```
