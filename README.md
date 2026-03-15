@@ -71,7 +71,153 @@ Dónde:
 - Los nodos **\<none\>** son los **agentes (agents) K3S**, los cuáles se
   conectarán al _control-plane_ y recibirán los nodos.
 
-## 4 Instalación y Configuración
+## 4. Instalación y Configuración
 
 Para la instalación y configuración del sistema distribuido véase
 [INSTALL](INSTALL.md).
+
+## 5. Uso
+
+Una vez instalado y configurado cada uno de los nodos, servidores y toda la
+infraestructura necesaria para el sistema distribuido, podemos proceder a hacer
+uso del algoritmo de Mandelbrot distribuido.
+
+### 5.1. Nos Conectamos al Servidor VPN
+
+```bash
+HOST_IP=$(grep nameserver /etc/resolv.conf | awk '{print $2}')
+echo "$HOST_IP"
+sudo ip route add 10.5.5.0/24 via "$HOST_IP"
+
+sudo wg-quick down wg0 2>/dev/null
+sudo wg-quick up wg0
+sudo wg show wg0 # Visualizar la interfaz activa wg0
+ping 10.5.5.1   # Probar la conectividad con el servidor VPN
+
+sudo ip route show | grep 10.5.5
+sudo ip route del 10.5.5.0/24 2>/dev/null
+sudo ip route add 10.5.5.0/24 dev wg0
+sudo ip route show | grep 10.5.5
+
+# Configuración de flannel
+sudo iptables -I INPUT -i flannel.1 -j ACCEPT
+sudo iptables -I FORWARD -i flannel.1 -j ACCEPT
+sudo iptables -I OUTPUT -o flannel.1 -j ACCEPT
+
+# Configuración de cni0
+sudo iptables -I INPUT -i cni0 -j ACCEPT
+sudo iptables -I FORWARD -i cni0 -j ACCEPT
+```
+
+### 5.2. Levantamos el Servidor y los Agents K3s
+
+1. Primeramente, el nodo con _servidor K3s_ ejecuta los siguientes comandos para
+   levantar el servidor:
+
+   ```bash
+   sudo systemctl start k3s # En caso de no estar habilitado y activo
+   # Nos aseguramos de que se encuentre "Active (running)"
+   sudo systemctl status k3s
+   ```
+
+2. Una vez levantado el servidor, los nodos _agent K3s_ ejecutan los siguientes
+   comandos:
+
+   ```bash
+   sudo systemctl start k3s-agent # En caso de no estar habilitado y activo
+   # Nos aseguramos de que se encuentre "Active (running)"
+   sudo systemctl status k3s-agent
+   ```
+
+3. Una vez que todos los nodos agents se encuentren activos, el servidor puede
+   ejecutar cualquiera de los siguientes comandos para visualizar el estado de
+   los nodos:
+
+   ```bash
+   sudo kubectl get nodes
+   sudo kubectl get nodes -o wide # Muestra más datos
+   ```
+
+### 5.3. Creamos y Exportamos Nuestra Imagen Docker a K3s
+
+Procedemos a crear y exportar la imagen Docker a K3s tanto en el _servidor K3s_
+como en cada uno de los _agents K3s_ siguiendo los pasos a continuación:
+
+1. Nos posicionamos en la carpeta raíz del repositorio.
+
+2. Creamos la imagen Docker a partir de nuestro
+   [Dockerfile](./docker/Dockerfile):
+
+   ```bash
+   docker build -f docker/Dockerfile -t quantum-core:1.0 ./rust
+   ```
+
+   > [!TIP]
+   >
+   > En caso de error por no poder descargar automáticamente las imágenes base
+   > del [Dockerfile](./docker/Dockerfile), procedemos a descargarlas
+   > manualmente, por ejemplo:
+   >
+   > ```bash
+   > # Imagen Rust base usada para compilar el ejecutable
+   > docker pull rust:1.93-slim-trixie
+   > docker pull debian:trixie-slim # Imagen base final
+   > ```
+
+3. Exportamos la imagen Docker a K3s:
+
+   ```bash
+   docker save quantum-core:1.0 | sudo k3s ctr images import -
+   ```
+
+### 5.4. Creamos los _pods_ desde el Servidor
+
+1. Creamos los manifestos:
+
+   ```bash
+   # Eliminamos los manifestos existentes (también elimina los pods existentes)
+   sudo kubectl delete -f k8s/
+
+   # Aplicamos los manifestos en orden
+   sudo kubectl apply -f ./k8s/coordinator-service.yml
+   sudo kubectl apply -f ./k8s/coordinator-deployment.yaml
+   sudo kubectl apply -f ./k8s/worker-headless-service.yaml
+   sudo kubectl apply -f ./k8s/worker-statefulset.yaml
+   ```
+
+2. Nos aseguramos de que todos los pods se hayan creado exitosamente:
+
+   ```bash
+   sudo kubectl get pods
+   sudo kubectl get pods -o wide # Muestra más datos
+   ```
+
+### 5.5. Visualizamos los Logs y la Imagen Generada desde el Servidor
+
+1. Para visualizar los logs del _coordinator_ ejecutamos cualquiera de los
+   siguientes comandos:
+
+   ```bash
+   sudo kubectl logs <nombre-del-pod-coordinator>
+   sudo kubectl logs deployment/coordinator
+   ```
+
+2. Para visualizar los logs de un _worker_ en específico ejecutamos:
+
+   ```bash
+   sudo kubectl logs <nombre-del-pod-worker>
+   ```
+
+3. Cuando el programa distribuido finalice, habrá generado la imagen del fractal
+   del conjunto de Mandelbrot en la ruta `/tmp/mandelbrot/output/fractal.png`.
+
+> [!TIP]
+>
+> Podemos visualizar la imagen desde la terminal haciendo uso de cualquiera de
+> los siguientes comandos:
+>
+> ```bash
+> viu /tmp/mandelbrot/output/fractal.png
+> chafa /tmp/mandelbrot/output/fractal.png
+> display /tmp/mandelbrot/output/fractal.png
+> ```
