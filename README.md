@@ -154,13 +154,13 @@ como en cada uno de los _agents K3s_ siguiendo los pasos a continuación:
 
    ```bash
    # Eliminamos los manifestos existentes (también elimina los pods existentes)
-   sudo kubectl delete -f k8s/
+   sudo kubectl delete -f kubernetes/
 
    # Aplicamos los manifestos en orden
-   sudo kubectl apply -f k8s/coordinator-service.yaml
-   sudo kubectl apply -f k8s/coordinator-deployment.yaml
-   sudo kubectl apply -f k8s/worker-headless-service.yaml
-   sudo kubectl apply -f k8s/worker-statefulset.yaml
+   sudo kubectl apply -f kubernetes/coordinator-service.yaml
+   sudo kubectl apply -f kubernetes/coordinator-deployment.yaml
+   sudo kubectl apply -f kubernetes/worker-headless-service.yaml
+   sudo kubectl apply -f kubernetes/worker-statefulset.yaml
    ```
 
 2. Nos aseguramos de que todos los pods se hayan creado exitosamente:
