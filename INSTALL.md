@@ -178,11 +178,16 @@ Para instalar K3s como servidor, ejecutamos el siguiente comando:
 
 ```bash
 curl -sfL https://get.k3s.io | \
-sh \
-  -s - server \
-    --bind-address=<ip-del-nodo> \
-    --advertise-address=<ip-del-nodo> \
-    --node-ip=<ip-del-nodo>
+  INSTALL_K3S_EXEC="server \
+    --node-ip=<ip-del-nodo> \
+    --flannel-iface=wg0 \
+    --flannel-backend=wireguard-native \
+    --cluster-cidr=10.42.0.0/16 \
+    --service-cidr=10.43.0.0/16 \
+    --disable=traefik \
+    --disable-network-policy \
+    --write-kubeconfig-mode=644" \
+  sh -
 ```
 
 ### 5.2. Instalación de un Agent K3s
@@ -190,12 +195,13 @@ sh \
 Para instalar k3s como _agent (agente)_, ejecutamos el siguiente comando:
 
 ```bash
-curl -sfL https://get.k3s.io | \
-  sh \
-    -s - agent \
-      --server=https://<ip-del-servidor>:6443 \
-      --token=<token-del-servidor> \
-      --node-ip=<ip-del-agente>
+curl -sfL https://get.k3s.io |
+  K3S_URL="https://<ip-del-servidor>:6443" \
+    K3S_TOKEN="<token-del-servidor>" \
+    INSTALL_K3S_EXEC="agent \
+      --node-ip=<ip-del-nodo> \
+      --flannel-iface=wg0" \
+    sh -
 ```
 
 Donde el `token-del-servidor` se encuentra en el archivo
