@@ -84,30 +84,8 @@ uso del algoritmo de Mandelbrot distribuido.
 
 ### 5.1. Nos Conectamos al Servidor VPN
 
-```bash
-HOST_IP=$(grep nameserver /etc/resolv.conf | awk '{print $2}')
-echo "$HOST_IP"
-sudo ip route add 10.5.5.0/24 via "$HOST_IP"
-
-sudo wg-quick down wg0 2>/dev/null
-sudo wg-quick up wg0
-sudo wg show wg0 # Visualizar la interfaz activa wg0
-ping 10.5.5.1   # Probar la conectividad con el servidor VPN
-
-sudo ip route show | grep 10.5.5
-sudo ip route del 10.5.5.0/24 2>/dev/null
-sudo ip route add 10.5.5.0/24 dev wg0
-sudo ip route show | grep 10.5.5
-
-# Configuración de flannel
-sudo iptables -I INPUT -i flannel.1 -j ACCEPT
-sudo iptables -I FORWARD -i flannel.1 -j ACCEPT
-sudo iptables -I OUTPUT -o flannel.1 -j ACCEPT
-
-# Configuración de cni0
-sudo iptables -I INPUT -i cni0 -j ACCEPT
-sudo iptables -I FORWARD -i cni0 -j ACCEPT
-```
+Véase
+[Iniciar WireGuard y Probar Conexión](/INSTALL.md#iniciar-wireguard-y-probar-conexión).
 
 ### 5.2. Levantamos el Servidor y los Agents K3s
 
