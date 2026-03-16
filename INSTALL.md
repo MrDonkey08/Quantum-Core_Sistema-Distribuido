@@ -65,15 +65,15 @@ sudo apt install wireguard
    ```text
    [Interface]
    PrivateKey = LLAVE_PRIVADA_SERVIDOR
-   Address = 10.0.0.1/24
-   DNS = 8.8.8.8 4.4.4.4
+   Address = 10.5.5.1/32
+   DNS = 8.8.8.8
    PostUp = ip route del 10.5.5.0/24 2>/dev/null; ip route add 10.5.5.0/24 dev wg0
    PostDown = ip route del 10.5.5.0/24 2>/dev/null
 
    [Peer]
    PublicKey = LLAVE_PÚBLICA_PEER_A
    Endpoint = IP_PÚBLICA_SERVIDOR
-   AllowedIPs = 0.0.0.0/0
+   AllowedIPs = 10.5.5.0/24
    PersistentKeepalive = 25
    ```
 
@@ -91,18 +91,17 @@ sudo apt install wireguard
 
    ```text
    [Interface]
-   Address = 10.0.0.1/24
-   ListenPort = 51820
    PrivateKey = LLAVE_PRIVADA_SERVIDOR
-   PostUp = sysctl -w net.ipv4.ip_forward=1
+   ListenPort = 51820
+   Address = 10.5.5.1/24
 
    [Peer]
    PublicKey = LLAVE_PÚBLICA_PEER_FOO
-   AllowedIPs = 10.0.0.2/32
+   AllowedIPs = 10.5.5.2/32
 
    [Peer]
    PublicKey = LLAVE_PÚBLICA_PEER_BAR
-   AllowedIPs = 10.0.0.3/32
+   AllowedIPs = 10.5.5.3/32
    ```
 
 ### 3.5. Iniciar WireGuard y Probar Conexión
@@ -117,7 +116,7 @@ sudo apt install wireguard
    podemos probar la conexión desde el _peer_ ejecutando:
 
    ```bash
-   ping 10.0.0.1
+   ping 10.5.5.1
    ```
 
 ## 4. Instalación y Configuración de Docker
