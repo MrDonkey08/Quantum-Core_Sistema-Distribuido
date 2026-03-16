@@ -7,17 +7,17 @@ generales para el proyecto de sistema distribuido de Mandelbrot.
 
 <!-- toc -->
 
-- [Buenas Prácticas de Seguridad](#buenas-prácticas-de-seguridad)
-  - [Protección de Datos Sensibles](#protección-de-datos-sensibles)
-  - [Configuración de `.gitignore`](#configuración-de-.gitignore)
-    - [Recursos Recomendados](#recursos-recomendados)
-- [Comentarios sobre esta Política](#comentarios-sobre-esta-política)
+- [1. Buenas Prácticas de Seguridad](#1.-buenas-prácticas-de-seguridad)
+  - [1.1. Protección de Datos Sensibles](#1.1.-protección-de-datos-sensibles)
+  - [1.2. Configuración de `.gitignore`](#1.2.-configuración-de-.gitignore)
+    - [1.2.1 Recursos Recomendados](#1.2.1.-recursos-recomendados)
+- [2. Comentarios sobre esta Política](#2.-comentarios-sobre-esta-política)
 
 <!-- tocstop -->
 
-## Buenas Prácticas de Seguridad
+## 1. Buenas Prácticas de Seguridad
 
-### Protección de Datos Sensibles
+### 1.1. Protección de Datos Sensibles
 
 Para mantener la tríada CID (Confidencialidad, Integridad, Disponibilidad):
 **Nunca hagas commit que contengan:**
@@ -31,7 +31,7 @@ Para mantener la tríada CID (Confidencialidad, Integridad, Disponibilidad):
 GitHub:
 [Removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository)
 
-### Configuración de `.gitignore`
+### 1.2. Configuración de `.gitignore`
 
 El repositorio incluye un `.gitignore` con reglas de seguridad. Antes de hacer
 commit:
@@ -41,7 +41,7 @@ commit:
 3. Usa `git-secrets` o `gitleaks` para escaneo automatizado (opcional pero
    recomendado)
 
-#### Recursos Recomendados
+#### 1.2.1. Recursos Recomendados
 
 En caso de actualizar el `.gitignore` considera revisar los siguientes recursos:
 
@@ -49,7 +49,7 @@ En caso de actualizar el `.gitignore` considera revisar los siguientes recursos:
 - [gitignore.io templates](https://www.toptal.com/developers/gitignore)
 - [GitHub gitignore templates](https://github.com/github/gitignore)
 
-## Comentarios sobre esta Política
+## 2. Comentarios sobre esta Política
 
 Si tienes sugerencias sobre cómo mejorar este proceso, por favor, abre un pull
 request.

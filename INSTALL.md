@@ -1,6 +1,6 @@
 # Guía para la Instalación y Configuración
 
-## Acerca
+## 1. Acerca
 
 En este documento se describen los pasos necesarios para la instalación y
 configuración de los nodos, específicamente para las distribuciones de Ubuntu y
@@ -11,7 +11,7 @@ Debian.
 > Para otras distribuciones, algunos de los pasos pueden cambiar, especialmente
 > si no están basadas en Ubuntu o Debian.
 
-## Actualización del Sistema
+## 2. Actualización del Sistema
 
 Se recomienda siempre actualizar primero el sistema. Para ello ejecutamos:
 
@@ -24,15 +24,15 @@ Donde:
 - `sudo apt update` actualiza los repositorios de paquetes
 - `sudo apt upgrade` actualiza los paquetes del sistema
 
-## Instalación y Configuración de WireGuard
+## 3. Instalación y Configuración de WireGuard
 
-### Instalación de WireGuard
+### 3.1. Instalación de WireGuard
 
 ```bash
 sudo apt install wireguard
 ```
 
-### Generación de Llaves
+### 3.2. Generación de Llaves
 
 1. Creamos una carpeta temporal para generar los _key pairs_ y nos posicionamos
    en ella:
@@ -53,7 +53,7 @@ sudo apt install wireguard
    wg pubkey < peer_A.key > peer_A.pub
    ```
 
-### Archivo de Configuración de un Peer
+### 3.3. Archivo de Configuración de un Peer
 
 1. Primero creamos la **llave pública y privada del _peer_**. Para ello véase la
    sección [Generación de Llaves](#generación-de-llaves).
@@ -77,7 +77,7 @@ sudo apt install wireguard
    PersistentKeepalive = 25
    ```
 
-### Archivo de Configuración del Servidor
+### 3.4. Archivo de Configuración del Servidor
 
 1. Primero creamos la **llave pública y privada del servidor**. Para ello véase
    la sección [Generación de Llaves](#generación-de-llaves).
@@ -105,7 +105,7 @@ sudo apt install wireguard
    AllowedIPs = 10.0.0.3/32
    ```
 
-### Iniciar WireGuard y Probar Conexión
+### 3.5. Iniciar WireGuard y Probar Conexión
 
 1. Para iniciar WireGuard, levantamos la interfaz `wg0` ejecutando:
 
@@ -120,9 +120,9 @@ sudo apt install wireguard
    ping 10.0.0.1
    ```
 
-## Instalación y Configuración de Docker
+## 4. Instalación y Configuración de Docker
 
-### Instalación de Docker
+### 4.1. Instalación de Docker
 
 Para instalar **Docker Engine** sigue la
 [guía de instalación oficial de Docker Engine](https://docs.docker.com/engine/install/).
@@ -134,7 +134,7 @@ oficiales para la instalación de **Docker Desktop**:
 - [Instalar Docker Desktop en MAC](https://docs.docker.com/desktop/setup/install/mac-install/)
 - [Instalar Docker Desktop en Linux](https://docs.docker.com/desktop/setup/install/linux/)
 
-### Configuración de Docker
+### 4.2. Configuración de Docker
 
 1. Primero habilitamos e iniciamos alguno de los siguientes servicios de Docker:
 
@@ -171,11 +171,11 @@ oficiales para la instalación de **Docker Desktop**:
    Después procedemos a cerrar y volver a iniciar sesión para que los cambios
    sean aplicados.
 
-## Instalación de K3s
+## 5. Instalación de K3s
 
-### Instalación del Servidor K3s
+### 5.1. Instalación del Servidor K3s
 
-Para instalar k3s como servidor, ejecutamos el siguiente comando:
+Para instalar K3s como servidor, ejecutamos el siguiente comando:
 
 ```bash
 curl -sfL https://get.k3s.io | \
@@ -186,7 +186,7 @@ sh \
     --node-ip=<ip-del-nodo>
 ```
 
-### Instalación de un Agent K3s
+### 5.2. Instalación de un Agent K3s
 
 Para instalar k3s como _agent (agente)_, ejecutamos el siguiente comando:
 

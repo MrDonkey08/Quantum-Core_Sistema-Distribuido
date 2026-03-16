@@ -3,7 +3,7 @@
 ## 1. Acerca
 
 Este proyecto consiste en el desarrollo de un **sistema distribuido** haciendo
-uso de tecnologías tales como **Docker**, **Rust**, **Kubernetes**,
+uso de tecnologías tales como **Docker**, **Rust**, **Kubernetes (K3s)**,
 **WireGuard**, y **QEMU** o **WSL2**, implementando una topología
 **hub-and-spoke** y desarrollando un algoritmo distribuido en Rust.
 
@@ -17,15 +17,15 @@ A continuación se muestra el software requerido por cada uno de los nodos
 > Puede que versiones anteriores del software funcionen. Las versiones
 > especificadas son aquellas que fueron probadas.
 
-| Software              | Propósito                                                                      |             Versión | Forzozamente requerido |
-| --------------------- | ------------------------------------------------------------------------------ | ------------------: | ---------------------- |
-| **WireGuard**         | Para establecer una conexión segura entre los nodos a través de Internet       |      1.0.20210914 + | Sí                     |
-| **Docker**            | Para la creación de los contenedores que ejecutará cada host                   |            29.3.0 + | Sí                     |
-| **K3s**               | Para la orquestación de los pods (contenedores)                                |       1.34.5+k3s1 + | Sí                     |
-| **iptables**          | Para el filtrado de paquetes IPv4/IPv6                                         |            1.8.11 + | No                     |
-| **iperf3**            | Para pruebas de rendimiento de throughput entre el servidor y los clientes VPN | 3.18 (cJSON 1.7.15) | No                     |
-| **ip** o **ifconfig** | Para visualizar las interfaces de red                                          |                 N/A | No                     |
-| **ping**              | Para probar la conectividad entre los nodos                                    |                 N/A | No                     |
+| Software              | Propósito                                                                      |               Versión | Forzozamente requerido |
+| --------------------- | ------------------------------------------------------------------------------ | --------------------: | ---------------------- |
+| **WireGuard**         | Para establecer una conexión segura entre los nodos a través de Internet       |        1.0.20210914 + | Sí                     |
+| **Docker**            | Para la creación de los contenedores que ejecutará cada host                   |              29.3.0 + | Sí                     |
+| **K3s**               | Para la orquestación de los pods (contenedores)                                |         1.34.5+k3s1 + | Sí                     |
+| **iptables**          | Para el filtrado de paquetes IPv4/IPv6                                         |              1.8.11 + | No                     |
+| **iperf3**            | Para pruebas de rendimiento de throughput entre el servidor y los clientes VPN | 3.18 (cJSON 1.7.15) + | No                     |
+| **ip** o **ifconfig** | Para visualizar las interfaces de red                                          |                   N/A | No                     |
+| **ping**              | Para probar la conectividad entre los nodos                                    |                   N/A | No                     |
 
 > [!NOTE]
 >
@@ -47,7 +47,7 @@ Para nuestra arquitectura, utilizamos una configuración que permitiese a
 cualquier nodo ser el **servidor K3s**, ofreciéndonos flexibilidad al momento de
 trabajar con K3s.
 
-### Roles de los Nodos
+### 3.1. Roles de los Nodos
 
 Los roles que establecimos para los nodos son:
 
@@ -157,10 +157,10 @@ como en cada uno de los _agents K3s_ siguiendo los pasos a continuación:
    sudo kubectl delete -f k8s/
 
    # Aplicamos los manifestos en orden
-   sudo kubectl apply -f ./k8s/coordinator-service.yml
-   sudo kubectl apply -f ./k8s/coordinator-deployment.yaml
-   sudo kubectl apply -f ./k8s/worker-headless-service.yaml
-   sudo kubectl apply -f ./k8s/worker-statefulset.yaml
+   sudo kubectl apply -f k8s/coordinator-service.yaml
+   sudo kubectl apply -f k8s/coordinator-deployment.yaml
+   sudo kubectl apply -f k8s/worker-headless-service.yaml
+   sudo kubectl apply -f k8s/worker-statefulset.yaml
    ```
 
 2. Nos aseguramos de que todos los pods se hayan creado exitosamente:
