@@ -120,11 +120,56 @@ sudo apt install wireguard
    ping 10.0.0.1
    ```
 
-## Instalación de Docker
+## Instalación y Configuración de Docker
 
-```bash
-sudo apt install docker
-```
+### Instalación de Docker
+
+Para instalar **Docker Engine** sigue la
+[guía de instalación oficial de Docker Engine](https://docs.docker.com/engine/install/).
+
+Alternativamente, para instalar **Docker Desktop** sigue cualquiera de las guías
+oficiales para la instalación de **Docker Desktop**:
+
+- [Instalar Docker Desktop en Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
+- [Instalar Docker Desktop en MAC](https://docs.docker.com/desktop/setup/install/mac-install/)
+- [Instalar Docker Desktop en Linux](https://docs.docker.com/desktop/setup/install/linux/)
+
+### Configuración de Docker
+
+1. Primero habilitamos e iniciamos alguno de los siguientes servicios de Docker:
+
+   ```bash
+   # Útil para entornos de pre-producción
+   sudo systemctl enable --now docker.service
+   # Útil para entornos de producción
+   sudo systemctl enable --now docker.socket
+   ```
+
+   > [!TIP]
+   >
+   > Si prefieres que el servicio no arranque automáticamente, ejecuta:
+   >
+   > ```bash
+   >   sudo systemctl stop docker.service docker.socket
+   > ```
+   >
+   > Para arrancarlo manualmente tendrás que ejecutar cualquiera de los
+   > siguientes comandos:
+   >
+   > ```bash
+   >   sudo systemctl start docker.service
+   >   sudo systemctl start docker.socket
+   > ```
+
+2. Para evitar tener que utilizar **permisos de usuario privilegiado** (i.e.,
+   usuario root o `sudo`), podemos agregar nuestro usuario al grupo de Docker:
+
+   ```bash
+   sudo usermod -aG docker "$USER"
+   ```
+
+   Después procedemos a cerrar y volver a iniciar sesión para que los cambios
+   sean aplicados.
 
 ## Instalación de K3s
 
@@ -134,11 +179,11 @@ Para instalar k3s como servidor, ejecutamos el siguiente comando:
 
 ```bash
 curl -sfL https://get.k3s.io | \
-  sh \
-    -s - server \
-      --bind-address=<ip-del-nodo> \
-      --advertise-address=<ip-del-nodo> \
-      --node-ip=<ip-del-nodo>
+sh \
+  -s - server \
+    --bind-address=<ip-del-nodo> \
+    --advertise-address=<ip-del-nodo> \
+    --node-ip=<ip-del-nodo>
 ```
 
 ### Instalación de un Agent K3s
