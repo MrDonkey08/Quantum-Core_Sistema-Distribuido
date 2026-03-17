@@ -4,17 +4,17 @@
 
 <!-- toc -->
 
-- [1. Acerca](#1.-acerca)
-- [2. Requisitos de Software](#2.-requisitos-de-software)
-- [3. Arquitectura del Sistema Distribuido (VPN + K3s)](<#3.-arquitectura-del-sistema-distribuido-(vpn-%2B-k3s)>)
-  - [3.1. Roles de los Nodos](#3.1.-roles-de-los-nodos)
-- [4. Instalación y Configuración](#4.-instalación-y-configuración)
-- [5. Uso](#5.-uso)
-  - [5.1. Nos Conectamos al Servidor VPN](#5.1.-nos-conectamos-al-servidor-vpn)
-  - [5.2. Levantamos el Servidor y los Agents K3s](#5.2.-levantamos-el-servidor-y-los-agents-k3s)
-  - [5.3. Creamos y Exportamos Nuestra Imagen Docker a K3s](#5.3.-creamos-y-exportamos-nuestra-imagen-docker-a-k3s)
-  - [5.4. Creamos los _pods_ desde el Servidor](#5.4.-creamos-los-pods-desde-el-servidor)
-  - [5.5. Visualizamos los Logs y la Imagen Generada desde el Servidor](#5.5.-visualizamos-los-logs-y-la-imagen-generada-desde-el-servidor)
+- [1. Acerca](#1-acerca)
+- [2. Requisitos de Software](#2-requisitos-de-software)
+- [3. Arquitectura del Sistema Distribuido (VPN + K3s)](#3-arquitectura-del-sistema-distribuido-vpn-k3s)
+  - [3.1. Roles de los Nodos](#31-roles-de-los-nodos)
+- [4. Instalación y Configuración](#4-instalación-y-configuración)
+- [5. Uso](#5-uso)
+  - [5.1. Nos Conectamos al Servidor VPN](#51-nos-conectamos-al-servidor-vpn)
+  - [5.2. Levantamos el Servidor y los Agents K3s](#52-levantamos-el-servidor-y-los-agents-k3s)
+  - [5.3. Creamos y Exportamos Nuestra Imagen Docker a K3s](#53-creamos-y-exportamos-nuestra-imagen-docker-a-k3s)
+  - [5.4. Creamos los _pods_ desde el Servidor](#54-creamos-los-pods-desde-el-servidor)
+  - [5.5. Visualizamos los Logs y la Imagen Generada desde el Servidor](#55-visualizamos-los-logs-y-la-imagen-generada-desde-el-servidor)
 
 <!-- tocstop -->
 

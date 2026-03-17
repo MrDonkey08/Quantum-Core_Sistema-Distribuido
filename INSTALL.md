@@ -4,20 +4,20 @@
 
 <!-- toc -->
 
-- [1. Acerca](#1.-acerca)
-- [2. Actualización del Sistema](#2.-actualización-del-sistema)
-- [3. Instalación y Configuración de WireGuard](#3.-instalación-y-configuración-de-wireguard)
-  - [3.1. Instalación de WireGuard](#3.1.-instalación-de-wireguard)
-  - [3.2. Generación de Llaves](#3.2.-generación-de-llaves)
-  - [3.3. Archivo de Configuración de un Peer](#3.3.-archivo-de-configuración-de-un-peer)
-  - [3.4. Archivo de Configuración del Servidor](#3.4.-archivo-de-configuración-del-servidor)
-  - [3.5. Iniciar WireGuard y Probar Conexión](#3.5.-iniciar-wireguard-y-probar-conexión)
-- [4. Instalación y Configuración de Docker](#4.-instalación-y-configuración-de-docker)
-  - [4.1. Instalación de Docker](#4.1.-instalación-de-docker)
-  - [4.2. Configuración de Docker](#4.2.-configuración-de-docker)
-- [5. Instalación de K3s](#5.-instalación-de-k3s)
-  - [5.1. Instalación del Servidor K3s](#5.1.-instalación-del-servidor-k3s)
-  - [5.2. Instalación de un Agent K3s](#5.2.-instalación-de-un-agent-k3s)
+- [1. Acerca](#1-acerca)
+- [2. Actualización del Sistema](#2-actualización-del-sistema)
+- [3. Instalación y Configuración de WireGuard](#3-instalación-y-configuración-de-wireguard)
+  - [3.1. Instalación de WireGuard](#31-instalación-de-wireguard)
+  - [3.2. Generación de Llaves](#32-generación-de-llaves)
+  - [3.3. Archivo de Configuración de un Peer](#33-archivo-de-configuración-de-un-peer)
+  - [3.4. Archivo de Configuración del Servidor](#34-archivo-de-configuración-del-servidor)
+  - [3.5. Iniciar WireGuard y Probar Conexión](#33-iniciar-wireguard-y-probar-conexión)
+- [4. Instalación y Configuración de Docker](#4-instalación-y-configuración-de-docker)
+  - [4.1. Instalación de Docker](#41-instalación-de-docker)
+  - [4.2. Configuración de Docker](#42-configuración-de-docker)
+- [5. Instalación de K3s](#5-instalación-de-k3s)
+  - [5.1. Instalación del Servidor K3s](#51-instalación-del-servidor-k3s)
+  - [5.2. Instalación de un Agent K3s](#52-instalación-de-un-agent-k3s)
 
 <!-- tocstop -->
 
