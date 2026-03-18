@@ -227,5 +227,9 @@ como en cada uno de los _agents K3s_ siguiendo los pasos a continuación:
 
 4.- Se asume que la VPN se encuentra activa en todos los nodos antes de ejecutar cualquier operación del sistema, ya que la comunicación entre el coordinator y los workers depende de la red privada.
 
+### 7. Notas Importantes
 
+1.-La comunicación entre nodos depende de una VPN, por lo que cualquier falla en su configuración o activación impide el correcto funcionamiento del sistema distribuido.
+
+2.-El sistema depende de la correcta resolución DNS interna del clúster de Kubernetes, gestionada por CoreDNS.En entornos como WSL, se detectó que el sistema sobrescribe automáticamente el archivo /etc/resolv.conf, lo que provoca que el DNS interno del clúster no funcione correctamente.Debido a este problema, los servicios de Kubernetes (ClusterIP), como coordinator-service, no lograban resolver correctamente hacia los pods, afectando la comunicación entre el coordinator y los workers.
 
