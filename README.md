@@ -218,3 +218,4 @@ como en cada uno de los _agents K3s_ siguiendo los pasos a continuación:
 > display /tmp/mandelbrot/output/fractal.png
 > ```
 ### 6. Notas Importantes y Supuestos
+1. Se asume que la resolución DNS dentro de la red privada funciona correctamente.
