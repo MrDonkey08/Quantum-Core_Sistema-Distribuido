@@ -221,5 +221,9 @@ como en cada uno de los _agents K3s_ siguiendo los pasos a continuación:
 
 1.-Se asume que la resolución DNS interna del clúster de Kubernetes funciona correctamente mediante CoreDNS.
 
+2.-Se asume que todos los nodos pueden comunicarse entre sí dentro de la red privada (VPN).
+
+3.-Se asume que las imágenes de contenedor son correctamente importadas en cada nodo del clúster.
+
 
 
