@@ -225,5 +225,7 @@ como en cada uno de los _agents K3s_ siguiendo los pasos a continuación:
 
 3.-Se asume que las imágenes de contenedor son correctamente importadas en cada nodo del clúster.
 
+4.- Se asume que la VPN se encuentra activa en todos los nodos antes de ejecutar cualquier operación del sistema, ya que la comunicación entre el coordinator y los workers depende de la red privada.
+
 
 
