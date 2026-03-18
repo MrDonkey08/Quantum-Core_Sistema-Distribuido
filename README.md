@@ -217,3 +217,4 @@ como en cada uno de los _agents K3s_ siguiendo los pasos a continuación:
 > chafa /tmp/mandelbrot/output/fractal.png
 > display /tmp/mandelbrot/output/fractal.png
 > ```
+### 6. Notas Importantes y Supuestos
