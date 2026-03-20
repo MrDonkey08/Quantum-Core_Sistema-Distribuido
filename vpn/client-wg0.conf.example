@@ -1,0 +1,10 @@
+# Configuración del cliente WireGuard (nodos worker)
+[Interface]
+PrivateKey = <TU_PRIVATE_KEY>
+Address = 10.5.5.X/32
+
+[Peer]
+PublicKey = <PUBLIC_KEY_DEL_SERVIDOR>
+Endpoint = <IP_PUBLICA_SERVIDOR>:51820
+AllowedIPs = 10.5.5.0/24
+PersistentKeepalive = 25
